@@ -1,0 +1,118 @@
+﻿@page "/search"
+
+@inject Store.Services.ProductService ProductService
+@inject IConfiguration Configuration
+@attribute [StreamRendering(true)]
+@rendermode InteractiveServer
+
+<PageTitle>Search Products</PageTitle>
+
+<h1>Search Products</h1>
+
+<p>Search our amazing outdoor products that you can purchase.</p>
+
+<div class="form-group">
+    <label for="search" class="form-label">Type your question:</label>
+    <div class="input-group mb-3">
+        <input type="text" id="search" class="form-control" @bind="searchTerm" placeholder="Enter search term..." />
+        <button id="btnSearch" class="btn btn-primary" @onclick="DoSearch" type="submit">Search</button>
+    </div>
+    <div class="form-check form-switch mb-3">
+        <InputCheckbox id="smartSearch" @bind-Value="smartSearch" />
+        <label class="form-check-label" for="smartSearch">Use Semantic Search</label>
+        <InputCheckbox id="useReasoningModel" @bind-Value="useReasoningModel" />
+        <label class="form-check-label" for="reasoningModel">Use Reasoning Model (deepseek-r1)</label>
+    </div>
+    <hr />
+</div>
+
+@if (isLoading)
+{
+    <div class="loading">
+        <p>Loading...</p>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(searchResponseMessage))
+{
+    <div>
+        <p>@searchResponseMessage</p>
+    </div>
+}
+
+@if (useReasoningModel && !string.IsNullOrEmpty(searchResponseThinkProcess))
+{
+    <div style="background-color: yellow; padding: 10px; border-radius: 5px;">
+        <h5>Thinking process</h5>
+        <p style="font-size: smaller;">@searchResponseThinkProcess</p>
+    </div>
+}
+
+@if (products == null && !isLoading)
+{
+    <p><em>Loading...</em></p>
+}
+else if (products != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in products)
+            {
+                <tr>
+                    <!-- Simulating images being hosted on a CDN -->
+                    <td><img height="80" width="80" src="https://raw.githubusercontent.com/MicrosoftDocs/mslearn-dotnet-cloudnative/main/dotnet-docker/Products/wwwroot/images/@product.ImageUrl" /></td>
+                    <td>@product.Name</td>
+                    <td>@product.Description</td>
+                    <td>@product.Price</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private string searchTerm = "";
+    private List<DataEntities.Product>? products;
+    private string searchResponseMessage = "";
+    private string searchResponseThinkProcess = "";
+    private string elapsedTime = "";
+    private bool smartSearch = false;
+    private bool _useReasoningModel = false;
+    private bool isLoading = false;
+
+    private bool useReasoningModel
+    {
+        get => _useReasoningModel;
+        set
+        {
+            if (value)
+            {
+                smartSearch = true;
+            }
+            _useReasoningModel = value;
+        }
+    }
+
+    private async Task DoSearch(MouseEventArgs e)
+    {
+        isLoading = true;
+        products = null;
+        searchResponseMessage = "";
+        searchResponseThinkProcess = "";
+        await Task.Delay(500);
+        var response = await ProductService.Search(searchTerm, smartSearch, useReasoningModel);
+        searchResponseMessage = response.Response;
+        searchResponseThinkProcess = response.ResponseThink;
+        products = response.Products;
+        elapsedTime = response.ElapsedTime.ToString();
+        isLoading = false;
+    }
+}

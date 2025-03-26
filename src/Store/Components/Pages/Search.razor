@@ -43,14 +43,14 @@
 
 @if (useReasoningModel && !string.IsNullOrEmpty(searchResponseThinkProcess))
 {
-    <div style="background-color: #512bd4; color: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 15px;">
+    <div style="background-color: #f7f9fa; color: #212529; border: 1px solid #dee2e6; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 15px;">
         <div @onclick="ToggleThinkingProcess" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
-            <h5 style="color: white; margin: 0;">Thinking process</h5>
-            <span>@(isThinkingProcessExpanded ? "▲" : "▼")</span>
+            <h5 style="color: #0078d7; margin: 0;">Thinking process</h5>
+            <span style="color: #0078d7;">@(isThinkingProcessExpanded ? "▲" : "▼")</span>
         </div>
         @if (isThinkingProcessExpanded)
         {
-            <hr style="margin: 10px 0; border-color: rgba(255, 255, 255, 0.3);" />
+            <hr style="margin: 10px 0; border-color: rgba(0, 120, 215, 0.2);" />
             <p style="font-size: smaller; margin-bottom: 0;">@searchResponseThinkProcess</p>
         }
     </div>

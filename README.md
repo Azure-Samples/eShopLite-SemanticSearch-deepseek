@@ -29,15 +29,9 @@ The reference application is part of the **[Generative AI for Beginners .NET](ht
 
 **GitHub CodeSpaces:** This project is designed to be opened in GitHub Codespaces as an easy way for anyone to deploy the solution entirely in the browser.
 
-This is the eShopLite Aplication running, performing a **Keyword Search**:
-
-![eShopLite Aplication running doing search using keyworkd search](./images/05eShopLite-SearchKeyWord.gif)
-
 This is the eShopLite Aplication running, performing a **Semantic Search** using **deepseek-r1** model:
 
-![eShopLite Aplication running doing search using keyworkd search using deepseek-r1]()
-
-WIP
+![eShopLite Aplication running doing search using keyworkd search using deepseek-r1](./images/07ReasoningSearch.png)
 
 The Aspire Dashboard to check the running services:
 
@@ -127,17 +121,19 @@ Follow these steps to run the project, locally or in CodeSpaces:
 
 In order to use existing models: deepseek-r1, gpt-4o-mini and text-embedding-ada-002, you need to define the specific connection string in the `Products` project.
 
-Add a user secret with the configuration:
+Add a user secret named `ConnectionStrings:openai` with the configuration for the Azure OpenAI service that contains the **gpt-4o-mini** and **text-embedding-ada-002** models, and a user secret named `ConnectionStrings:deepseek-r1` with the configuration for the Azure OpenAI service that contains the **DeepSeek-R1** model.
 
 ```bash
 cd src/Products
 
 dotnet user-secrets set "ConnectionStrings:openai" "Endpoint=https://<endpoint>.openai.azure.com/;Key=<key>;"
+
+dotnet user-secrets set "ConnectionStrings:deepseek-r1" "Endpoint=https://<endpoint>.openai.azure.com/;Key=<key>;"
 ```
 
-This Azure OpenAI service must contain:
+This Azure OpenAI services must contain:
 
-- a `deepseek-r1` model named **deepseek-r1**
+- a `deepseek-r1` model named **DeepSeek-R1**
 - a `gpt-4o-mini` model named **gpt-4o-mini**
 - a `text-embedding-ada-002` model named **text-embedding-ada-002**
 

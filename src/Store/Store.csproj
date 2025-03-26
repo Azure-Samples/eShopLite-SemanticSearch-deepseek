@@ -6,6 +6,7 @@
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Markdig" Version="0.40.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.11.1" />
   </ItemGroup>
   <ItemGroup>

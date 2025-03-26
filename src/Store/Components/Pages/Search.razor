@@ -1,4 +1,5 @@
 ﻿@page "/search"
+@using Markdig
 
 @inject Store.Services.ProductService ProductService
 @inject IConfiguration Configuration
@@ -36,18 +37,24 @@
 @if (!string.IsNullOrEmpty(searchResponseMessage))
 {
     <div>
-        <p>@searchResponseMessage</p>
+        @((MarkupString)RenderMarkdown(searchResponseMessage))
     </div>
 }
 
 @if (useReasoningModel && !string.IsNullOrEmpty(searchResponseThinkProcess))
 {
-    <div style="background-color: #512bd4; color: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-        <h5 style="color: white; margin-top: 0;">Thinking process</h5>
-        <p style="font-size: smaller; margin-bottom: 0;">@searchResponseThinkProcess</p>
+    <div style="background-color: #512bd4; color: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 15px;">
+        <div @onclick="ToggleThinkingProcess" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+            <h5 style="color: white; margin: 0;">Thinking process</h5>
+            <span>@(isThinkingProcessExpanded ? "▲" : "▼")</span>
+        </div>
+        @if (isThinkingProcessExpanded)
+        {
+            <hr style="margin: 10px 0; border-color: rgba(255, 255, 255, 0.3);" />
+            <p style="font-size: smaller; margin-bottom: 0;">@searchResponseThinkProcess</p>
+        }
     </div>
 }
-
 
 @if (products == null && !isLoading)
 {
@@ -88,6 +95,28 @@ else if (products != null)
     private bool smartSearch = false;
     private bool _useReasoningModel = false;
     private bool isLoading = false;
+    private bool isThinkingProcessExpanded = false;
+    private MarkdownPipeline markdownPipeline;
+
+    protected override void OnInitialized()
+    {
+        markdownPipeline = new MarkdownPipelineBuilder()
+            .UseAdvancedExtensions()
+            .Build();
+    }
+
+    private void ToggleThinkingProcess()
+    {
+        isThinkingProcessExpanded = !isThinkingProcessExpanded;
+    }
+
+    private string RenderMarkdown(string markdown)
+    {
+        if (string.IsNullOrEmpty(markdown))
+            return string.Empty;
+
+        return Markdig.Markdown.ToHtml(markdown, markdownPipeline);
+    }
 
     private bool useReasoningModel
     {
@@ -108,6 +137,7 @@ else if (products != null)
         products = null;
         searchResponseMessage = "";
         searchResponseThinkProcess = "";
+        isThinkingProcessExpanded = false;
         await Task.Delay(500);
         var response = await ProductService.Search(searchTerm, smartSearch, useReasoningModel);
         searchResponseMessage = response.Response;

@@ -42,11 +42,12 @@
 
 @if (useReasoningModel && !string.IsNullOrEmpty(searchResponseThinkProcess))
 {
-    <div style="background-color: yellow; padding: 10px; border-radius: 5px;">
-        <h5>Thinking process</h5>
-        <p style="font-size: smaller;">@searchResponseThinkProcess</p>
+    <div style="background-color: #512bd4; color: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h5 style="color: white; margin-top: 0;">Thinking process</h5>
+        <p style="font-size: smaller; margin-bottom: 0;">@searchResponseThinkProcess</p>
     </div>
 }
+
 
 @if (products == null && !isLoading)
 {
